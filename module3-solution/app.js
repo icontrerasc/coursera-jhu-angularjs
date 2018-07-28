@@ -9,14 +9,7 @@ angular.module('NarrowItDownApp', [])
 
 function FoundItemsDirective() {
   var ddo = {
-    //templateUrl: 'foundItemsTemplate.html',
-    template:
-   '<h3>Title: </h3>\
-   <ol>\
-      <li ng-repeat="item in foundItemsViewModel.foundList">\
-        {{ item.short_name }} of {{ item.description }}\
-      </li>\
-    </ol>',
+    templateUrl: 'foundItemsTemplate.html',
     scope: {
       foundList: '<',
       onRemove: '&'
@@ -37,18 +30,23 @@ NarrowItDownController.$inject = ['MenuSearchService'];
 function NarrowItDownController(MenuSearchService) {
   var narrowItDownViewModel = this;
 
-  narrowItDownViewModel.foundList = [];
+  narrowItDownViewModel.foundList = null;
   narrowItDownViewModel.searchTerm = "";
 
   narrowItDownViewModel.getMatchedMenuItems = function () {
-    var promise = MenuSearchService.getMatchedMenuItems(narrowItDownViewModel.searchTerm);
+    if (narrowItDownViewModel.searchTerm) {
+      var promise = MenuSearchService.getMatchedMenuItems(narrowItDownViewModel.searchTerm);
+      promise.then(function (response) {
+        narrowItDownViewModel.foundList = response;
+      })
+      .catch(function (error) {
+        console.log("Error! Try again!");
+      });
+    }
+  };
 
-    promise.then(function (response) {
-      narrowItDownViewModel.foundList = response;
-    })
-    .catch(function (error) {
-      console.log("Error! Try again!");
-    });
+  narrowItDownViewModel.removeItem = function (itemIndex) {
+    narrowItDownViewModel.foundList.splice(itemIndex, 1);
   };
 }
 
