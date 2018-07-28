@@ -9,7 +9,14 @@ angular.module('NarrowItDownApp', [])
 
 function FoundItemsDirective() {
   var ddo = {
-    templateUrl: 'foundItemsTemplate.html',
+    //templateUrl: 'foundItemsTemplate.html',
+    template:
+   '<h3>Title: </h3>\
+   <ol>\
+      <li ng-repeat="item in foundItemsViewModel.foundList">\
+        {{ item.short_name }} of {{ item.description }}\
+      </li>\
+    </ol>',
     scope: {
       foundList: '<',
       onRemove: '&'
@@ -37,7 +44,7 @@ function NarrowItDownController(MenuSearchService) {
     var promise = MenuSearchService.getMatchedMenuItems(narrowItDownViewModel.searchTerm);
 
     promise.then(function (response) {
-      narrowItDownViewModel.foundList = response.data;
+      narrowItDownViewModel.foundList = response;
     })
     .catch(function (error) {
       console.log("Error! Try again!");
